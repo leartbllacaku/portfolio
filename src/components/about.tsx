@@ -1,6 +1,6 @@
 import { Briefcase, Github } from "lucide-react"
 import { useRef, useState, useEffect } from "react"
-import tailwind from "../assets/tailwind-bg.png"
+import tailwind from "/assets/tailwind-bg.png"
 
 // Simple useInView hook
 function useInView(ref: React.RefObject<HTMLDivElement | null>, options?: IntersectionObserverInit) {
