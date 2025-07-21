@@ -1,0 +1,4 @@
+/* Safe area padding for notched devices */
+.pt-safe {
+  padding-top: env(safe-area-inset-top);
+}
