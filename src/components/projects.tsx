@@ -1,12 +1,3 @@
-import ffe from "../assets/ffe-bau/ffe-bau-mobile-left.webp"
-import ffe1 from "../assets/ffe-bau/ffe-bau4-portrait.webp"
-import ffeDesktop from "../assets//ffe-bau/macbook.webp"
-import ff3 from "../assets/ffe-bau/ffe1.webp"
-import football1 from "../assets/football/userBookings-front.webp"
-import football2 from "../assets/football/register-left.webp"
-import football3 from "../assets/football/homepage-landscape.webp"
-import football4 from "../assets/football/checkout-front.webp"
-
 import ProjectCard from "./ProjectCard"
 interface Project {
   name: string
@@ -24,10 +15,10 @@ export default function FeaturedProjectsSection() {
         "A modern, bilingual full-stack web application built for FFE BAU, a German construction company. This comprehensive platform showcases construction projects, manages client interactions, and provides administrative tools for project management.",
       techStack: ["React", "Express", "PostgreSQL", "Prisma ORM", "TailwindCSS", "Shadcn UI"],
       images: [
-        { src: ffe, alt: "About us hero section.", type: "phone" },
-        { src: ffeDesktop, alt: "Homepage hero section.", type: "laptop" },
-        { src: ffe1, alt: "Contact page.", type: "phone" },
-        { src: ff3, alt: "Our Process page.", type: "laptop" },
+        { src: "/src/assets/ffe-bau/ffe-bau-mobile-left.webp", alt: "About us hero section.", type: "phone" },
+        { src: "/src/assets/ffe-bau/macbook.webp", alt: "Homepage hero section.", type: "laptop" },
+        { src: "/src/assets/ffe-bau/ffe-bau4-portrait.webp", alt: "Contact page.", type: "phone" },
+        { src: "/src/assets/ffe-bau/ffe1.webp", alt: "Our Process page.", type: "laptop" },
       ],
     },
     {
@@ -36,10 +27,10 @@ export default function FeaturedProjectsSection() {
         "A web application designed to streamline the management of football matches, ticket reservations, and user accounts. Built with a modern tech stack, the platform provides a seamless experience for both administrators and regular users, ensuring efficient operations and a user-friendly interface.",
       techStack: ["React", "Express", "PostgreSQL", "Prisma ORM", "Stripe", "TailwindCSS", "Shadcn UI"],
       images: [
-        { src: football1, alt: "Mobile Task List", type: "laptop" },
-        { src: football2, alt: "Task Detail Screen", type: "phone" },
-        { src: football3, alt: "Task Detail Screen", type: "laptop" },
-        { src: football4, alt: "Task Detail Screen", type: "laptop" },
+        { src: "/src/assets/football/userBookings-front.webp", alt: "Mobile Task List", type: "laptop" },
+        { src: "/src/assets/football/register-left.webp", alt: "Task Detail Screen", type: "phone" },
+        { src: "/src/assets/football/homepage-landscape.webp", alt: "Task Detail Screen", type: "laptop" },
+        { src: "/src/assets/football/checkout-front.webp", alt: "Task Detail Screen", type: "laptop" },
       ],
     },
     {
@@ -59,8 +50,8 @@ export default function FeaturedProjectsSection() {
       <div className="relative z-10 max-w-7xl mx-auto">
         <h2 className="text-5xl font-bold text-center text-white mb-12">Featured Projects</h2>
         <div className="flex flex-col gap-12">
-          {projects.map((project, index) => (
-            <section key={index} className="w-full">
+          {projects.map((project) => (
+            <section key={project.name} className="w-full">
               <ProjectCard project={project} />
             </section>
           ))}

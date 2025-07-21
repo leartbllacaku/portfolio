@@ -1,6 +1,4 @@
-import { useEffect, useRef } from "react"
-import { gsap } from "gsap"
-import { ScrollTrigger } from "gsap/ScrollTrigger"
+import { useRef, useState, useEffect } from "react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 
@@ -11,28 +9,23 @@ interface Project {
   images: { src?: string; alt?: string; type?: "laptop" | "phone" }[]
 }
 
-export default function ProjectCard({ project }: { project: Project }) {
-  const imagesRef = useRef<(HTMLImageElement | null)[]>([])
-
+// Simple useInView hook for a single element
+function useInViewSingle(threshold = 0.2) {
+  const ref = useRef<HTMLImageElement | null>(null);
+  const [inView, setInView] = useState(false);
   useEffect(() => {
-    gsap.registerPlugin(ScrollTrigger)
-    if (imagesRef.current) {
-      gsap.set(imagesRef.current, { opacity: 0, y: 40 })
-      gsap.to(imagesRef.current, {
-        opacity: 1,
-        y: 0,
-        duration: 2,
-        stagger: 0.15,
-        ease: "power3.out",
-        scrollTrigger: {
-          trigger: imagesRef.current[0]?.parentElement,
-          start: "top 80%",
-          once: true
-        }
-      })
-    }
-  }, [project.images])
+    if (!ref.current) return;
+    const observer = new window.IntersectionObserver(
+      ([entry]) => setInView(entry.isIntersecting),
+      { threshold }
+    );
+    if (ref.current) observer.observe(ref.current);
+    return () => observer.disconnect();
+  }, [threshold]);
+  return [ref, inView] as const;
+}
 
+export default function ProjectCard({ project }: { project: Project }) {
   return (
     <div className="flex flex-col gap-4">
       {/* Project Details Card */}
@@ -56,25 +49,27 @@ export default function ProjectCard({ project }: { project: Project }) {
       {project.images.length > 0 && (
         <Card className="p-4 shadow-md hover:shadow-lg transition-shadow bg-transparent">
           <CardContent className="p-0 grid grid-cols-1 gap-2 md:flex md:flex-row md:items-center md:justify-center">
-            {project.images.map((image, imgIndex) => (
-              <img
-                loading="lazy"
-                key={imgIndex}
-                ref={el => {
-                  imagesRef.current[imgIndex] = el;
-                }}
-                src={image.src}
-                alt={image.alt}
-                width={image.type === "laptop" ? 400 : 300}
-                height={image.type === "laptop" ? 250 : 200}
-                className={
-                  "rounded-md object-cover mx-auto " +
-                  (image.type === "laptop"
-                    ? "w-full md:max-w-[400px] lg:max-w-[350px]"
-                    : "w-full md:max-w-[300px] lg:max-w-[250px]")
-                }
-              />
-            ))}
+            {project.images.map((image) => {
+              const [imgRef, imgInView] = useInViewSingle(0.2);
+              return (
+                <img
+                  loading="lazy"
+                  key={image.src}
+                  ref={imgRef}
+                  src={image.src}
+                  alt={image.alt}
+                  width={image.type === "laptop" ? 400 : 300}
+                  height={image.type === "laptop" ? 250 : 200}
+                  className={
+                    `rounded-md object-cover mx-auto transition-all duration-700 ease-out
+                    ${imgInView ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'} ` +
+                    (image.type === "laptop"
+                      ? "w-full md:max-w-[400px] lg:max-w-[350px]"
+                      : "w-full md:max-w-[300px] lg:max-w-[250px]")
+                  }
+                />
+              );
+            })}
           </CardContent>
         </Card>
       )}

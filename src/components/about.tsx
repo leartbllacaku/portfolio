@@ -1,11 +1,27 @@
 import { Briefcase, Github } from "lucide-react"
-import { useEffect, useRef } from "react"
-import { gsap } from "gsap"
+import { useRef, useState, useEffect } from "react"
 import tailwind from "../assets/tailwind-bg.png"
+
+// Simple useInView hook
+function useInView(ref: React.RefObject<HTMLDivElement | null>, options?: IntersectionObserverInit) {
+  const [inView, setInView] = useState(false);
+  useEffect(() => {
+    if (!ref.current) return;
+    const observer = new window.IntersectionObserver(
+      ([entry]) => setInView(entry.isIntersecting),
+      options
+    );
+    if (ref.current) observer.observe(ref.current);
+    return () => observer.disconnect();
+  }, [ref, options]);
+  return inView;
+}
+
 export default function AboutMe() {
   const technologiesRef = useRef<HTMLDivElement>(null)
-  const iconRefs = useRef<(HTMLDivElement | null)[]>([])
+  const [iconsInView, setIconsInView] = useState(false);
   const marqueeRef = useRef<HTMLDivElement>(null);
+  const [marqueeInView, setMarqueeInView] = useState(false);
 
   const hangingTechnologies = [
     { name: "Java", logo: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/java/java-original.svg' },
@@ -28,75 +44,13 @@ export default function AboutMe() {
     { name: "CSS3", logo: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/css3/css3-original.svg" },
   ]
 
-  useEffect(() => {
-    if (technologiesRef.current) {
-      // Set initial state - icons positioned above the viewport
-      gsap.set(iconRefs.current, {
-        y: -200,
-        opacity: 0,
-        scale: 0.5,
-        rotation: -15
-      })
+  // Detect when icons are in view
+  const iconsAreInView = useInView(technologiesRef, { threshold: 0.2 });
+  useEffect(() => setIconsInView(iconsAreInView), [iconsAreInView]);
 
-      // Create the falling animation
-      const tl = gsap.timeline({
-        scrollTrigger: {
-          trigger: technologiesRef.current,
-          start: "top 80%",
-          end: "bottom 20%",
-          toggleActions: "play none none reverse"
-        }
-      })
-
-      // Staggered falling animation for each icon
-      tl.to(iconRefs.current, {
-        y: 0,
-        opacity: 1,
-        scale: 1,
-        rotation: 0,
-        duration: 1.2,
-        ease: "bounce.out",
-        stagger: 0.15,
-        onComplete: () => {
-          // Add subtle floating animation after falling
-          gsap.to(iconRefs.current, {
-            y: -10,
-            duration: 2,
-            ease: "power2.inOut",
-            yoyo: true,
-            repeat: -1,
-            stagger: 0.1
-          })
-        }
-      })
-
-      return () => {
-        tl.kill()
-      }
-    }
-  }, [])
-
-  // GSAP Marquee Effect for More Technologies
-  useEffect(() => {
-    if (!marqueeRef.current) return;
-    const marquee = marqueeRef.current;
-    // Get the width of half the children (since duplicated)
-    const totalWidth = marquee.scrollWidth / 2;
-    gsap.set(marquee, { x: 0 });
-    gsap.killTweensOf(marquee);
-    const tween = gsap.to(marquee, {
-      x: -totalWidth,
-      duration: 15,
-      ease: "linear",
-      repeat: -1,
-      modifiers: {
-        x: (x) => `${parseFloat(x) % -totalWidth}px`
-      }
-    });
-    return () => {
-      tween.kill();
-    };
-  }, [scrollingTechnologies]);
+  // Marquee animation (simple CSS, only animates when in view)
+  const marqueeIsInView = useInView(marqueeRef, { threshold: 0.1 });
+  useEffect(() => setMarqueeInView(marqueeIsInView), [marqueeIsInView]);
 
   return (
     <section id="about" className="min-h-screen py-8 sm:py-12 md:py-16 px-5 sm:px-8 md:px-22 w-full bg-gradient-to-br from-black via-gray-900 to-black relative overflow-hidden font-sans">
@@ -128,14 +82,11 @@ export default function AboutMe() {
               const positions = [10, 25, 45, 70, 85]; // Percentage positions across width
               const stringLength = stringLengths[index] || 120;
               const position = positions[index] || 50;
-              
               return (
                 <div
                   key={tech.name}
-                  ref={(el) => {
-                    iconRefs.current[index] = el
-                  }}
-                  className="absolute flex flex-col items-center group"
+                  className={`absolute flex flex-col items-center group transition-all duration-700 ease-out
+                    ${iconsInView ? 'opacity-100 translate-y-0 scale-100 rotate-0' : 'opacity-0 -translate-y-20 scale-75 -rotate-6'}`}
                   style={{
                     left: `${position}%`,
                     top: `${stringLength}px`,
@@ -147,9 +98,8 @@ export default function AboutMe() {
                     className="w-px bg-gray-400 group-hover:bg-blue-400 transition-colors duration-300"
                     style={{ height: `${stringLength}px` }}
                   ></div>
-
                   {/* Icon in circle */}
-                  <div className="w-16 h-16 sm:w-20 sm:h-20 md:w-24 md:h-24 bg-white/90 rounded-full shadow-md flex items-center justify-center border border-gray-300 group-hover:scale-105 transition-transform duration-300">
+                  <div className={`w-16 h-16 sm:w-20 sm:h-20 md:w-24 md:h-24 bg-white/90 rounded-full shadow-md flex items-center justify-center border border-gray-300 group-hover:scale-105 transition-transform duration-300 ${iconsInView ? 'animate-bounce-slow' : ''}`}>
                     <img
                       loading="lazy"
                       src={tech.logo}
@@ -157,7 +107,6 @@ export default function AboutMe() {
                       className="w-8 h-8 sm:w-10 sm:h-10 object-contain"
                     />
                   </div>
-
                   {/* Label */}
                   <p className="mt-2 text-xs sm:text-sm text-white font-medium">{tech.name}</p>
                 </div>
@@ -165,13 +114,12 @@ export default function AboutMe() {
             })}
           </div>
         </div>
-        
         {/* Scrolling Technologies Section */}
         <div className="mt-24 lg:mt-24">
           <h3 className="text-2xl sm:text-3xl md:text-4xl font-bold text-white mb-8 text-center">More Technologies</h3>
           <div className="relative overflow-hidden max-w-4xl mx-auto">
             <div
-              className="flex gap-4 sm:gap-6 md:gap-8 py-4"
+              className={`flex gap-4 sm:gap-6 md:gap-8 py-4 transition-transform duration-1000 ${marqueeInView ? 'animate-marquee' : ''}`}
               ref={marqueeRef}
               style={{ willChange: "transform" }}
             >
@@ -189,8 +137,8 @@ export default function AboutMe() {
                 </div>
               ))}
               {/* Duplicate for seamless loop */}
-              {scrollingTechnologies.map((tech, index) => (
-                <div key={`${tech.name}-duplicate-${index}`} className="flex flex-col items-center group min-w-[60px] sm:min-w-[70px] md:min-w-[80px]">
+              {scrollingTechnologies.map((tech) => (
+                <div key={`${tech.name}-duplicate`} className="flex flex-col items-center group min-w-[60px] sm:min-w-[70px] md:min-w-[80px]">
                   <div className="w-10 h-10 sm:w-12 sm:h-12 md:w-14 md:h-14 bg-white/90 rounded-full shadow-md flex items-center justify-center border border-gray-300 group-hover:scale-110 transition-transform duration-300">
                     <img
                       loading="lazy"
@@ -209,3 +157,8 @@ export default function AboutMe() {
     </section>
   )
 }
+
+// Add Tailwind animation classes in your global CSS:
+// .animate-bounce-slow { animation: bubbleFloat 2s infinite; }
+// .animate-marquee { animation: marquee 15s linear infinite; }
+// @keyframes marquee { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
