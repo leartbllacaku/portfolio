@@ -15,10 +15,10 @@ export default function FeaturedProjectsSection() {
         "A modern, bilingual full-stack web application built for FFE BAU, a German construction company. This comprehensive platform showcases construction projects, manages client interactions, and provides administrative tools for project management.",
       techStack: ["React", "Express", "PostgreSQL", "Prisma ORM", "TailwindCSS", "Shadcn UI"],
       images: [
-        { src: "/src/assets/ffe-bau/ffe-bau-mobile-left.webp", alt: "About us hero section.", type: "phone" },
-        { src: "/src/assets/ffe-bau/macbook.webp", alt: "Homepage hero section.", type: "laptop" },
-        { src: "/src/assets/ffe-bau/ffe-bau4-portrait.webp", alt: "Contact page.", type: "phone" },
-        { src: "/src/assets/ffe-bau/ffe1.webp", alt: "Our Process page.", type: "laptop" },
+        { src: "/assets/ffe-bau/ffe-bau-mobile-left.webp", alt: "About us hero section.", type: "phone" },
+        { src: "/assets/ffe-bau/macbook.webp", alt: "Homepage hero section.", type: "laptop" },
+        { src: "/assets/ffe-bau/ffe-bau4-portrait.webp", alt: "Contact page.", type: "phone" },
+        { src: "/assets/ffe-bau/ffe1.webp", alt: "Our Process page.", type: "laptop" },
       ],
     },
     {
@@ -27,10 +27,10 @@ export default function FeaturedProjectsSection() {
         "A web application designed to streamline the management of football matches, ticket reservations, and user accounts. Built with a modern tech stack, the platform provides a seamless experience for both administrators and regular users, ensuring efficient operations and a user-friendly interface.",
       techStack: ["React", "Express", "PostgreSQL", "Prisma ORM", "Stripe", "TailwindCSS", "Shadcn UI"],
       images: [
-        { src: "/src/assets/football/userBookings-front.webp", alt: "Mobile Task List", type: "laptop" },
-        { src: "/src/assets/football/register-left.webp", alt: "Task Detail Screen", type: "phone" },
-        { src: "/src/assets/football/homepage-landscape.webp", alt: "Task Detail Screen", type: "laptop" },
-        { src: "/src/assets/football/checkout-front.webp", alt: "Task Detail Screen", type: "laptop" },
+        { src: "/assets/football/userBookings-front.webp", alt: "Mobile Task List", type: "laptop" },
+        { src: "/assets/football/register-left.webp", alt: "Task Detail Screen", type: "phone" },
+        { src: "/assets/football/homepage-landscape.webp", alt: "Task Detail Screen", type: "laptop" },
+        { src: "/assets/football/checkout-front.webp", alt: "Task Detail Screen", type: "laptop" },
       ],
     },
     {
