@@ -121,7 +121,6 @@ export default function HeroSection() {
           <div className="flex justify-center items-center relative p-2 md:p-4 lg:col-span-1 pt-8 md:pt-16 lg:pt-30">
             <Card className="p-2 md:p-4 shadow-lg hover:shadow-xl transition-shadow">
               <img
-                loading="lazy"
                 src={img1}
                 alt="Morgan"
                 width={400}
